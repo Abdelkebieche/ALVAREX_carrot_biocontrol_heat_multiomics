@@ -8,38 +8,57 @@ The repository organises the supplied analysis scripts into a publication-orient
 
 ## Study at a glance
 
+This study was organised as a **sequential design**. The first layer was a phenotypic experiment across six carrot genotypes and four thermal regimes. Those disease-response results were then used to define a smaller, biologically informative subset for the molecular analyses. In the manuscript, **PRESTO and ROBILA** were retained as contrasting genotypes, and **NH, HS-7 and HS-2** were retained as the three thermal backgrounds for transcriptomic and metabolomic follow-up. The **HS** regime was not carried forward into the omics analyses because heat exposure began at D0, simultaneously with treatment application, and therefore did not represent a pre-treatment thermal history.
+
 ```mermaid
-flowchart LR
-    A[6 carrot genotypes] --> P[Disease phenotype
-NH / HS-7 / HS-2 / HS]
-    A2[PRESTO + ROBILA] --> R[RNA-seq
+flowchart TD
+    A[Phenotypic experiment
+6 genotypes × 4 temperature regimes × 2 treatments] --> B[Disease response
+AUDPC + disease progression]
+    B --> C[Phenotype-informed selection for omics]
+
+    C --> G[Selected genotypes
+PRESTO + ROBILA]
+    C --> T[Selected thermal backgrounds
+NH + HS-7 + HS-2]
+    C --> H[HS not retained for omics
+heat started at D0]
+
+    G --> R[RNA-seq
 D0 / D2 / D4]
-    A2 --> M[UHPLC-HRMS
+    T --> R
+    G --> M[UHPLC-HRMS
 D0 / D4 / D10]
+    T --> M
+
     R --> W[WGCNA
 D2 + D4]
     R --> S[maSigPro
 D0 + D2 + D4]
-    W --> I[Cross-genotype + WGCNA × maSigPro integration]
+    W --> I[Cross-genotype comparison
++ WGCNA × maSigPro integration]
     S --> I
-    M --> MW[ROBILA-D4 reference co-abundance network]
+
+    M --> MW[ROBILA-D4 reference
+co-abundance network]
     MW --> MP[Hub-feature projection
 PRESTO + ROBILA]
-    P --> X[Integrated biological interpretation]
+
+    B --> X[Integrated biological interpretation]
     I --> X
     MP --> X
 ```
 
-### Experimental layers
+### Experimental logic
 
-| Layer | Genotypes | Temperatures | Stages | Main analysis |
-|---|---|---|---|---|
-| Disease phenotype | DEEP, NANT, NEVA, OXHELLA, PRESTO, ROBILA | NH, HS-7, HS-2, HS | 11–54 DAI | mixed models, AUDPC, AR(1) |
-| RNA-seq WGCNA | PRESTO, ROBILA | NH, HS-7, HS-2 | D2, D4 | genotype-specific signed WGCNA |
-| RNA-seq profiles | PRESTO, ROBILA | NH, HS-7, HS-2 | D0, D2, D4 | maSigPro shared-baseline profiles |
-| UHPLC-HRMS | PRESTO, ROBILA | NH, HS-7, HS-2 | D0, D4, D10 | PLS-DA + ROBILA-D4 co-abundance WGCNA |
+| Stage | Biological scope | Role in the study | Main analysis |
+|---|---|---|---|
+| **1. Phenotypic screening** | 6 genotypes × 4 thermal regimes × Control/Treated | Quantify disease response and identify informative genotype/temperature contrasts for deeper molecular analysis | mixed models, AUDPC, repeated disease progression |
+| **2. Omics subset selection** | PRESTO + ROBILA; NH + HS-7 + HS-2 | Define the focused molecular subset from the phenotypic experiment | phenotype-informed selection described in the manuscript |
+| **3. Transcriptomics** | PRESTO + ROBILA; NH + HS-7 + HS-2 | Characterise coordinated transcriptional responses to treatment, temperature and sampling stage | WGCNA, maSigPro, GO/functional analyses |
+| **4. Metabolomics** | PRESTO + ROBILA; NH + HS-7 + HS-2 | Characterise treatment- and temperature-associated metabolic structure | PLS-DA, co-abundance network, hub-feature projection |
 
-**Important:** “all six genotypes” applies to the disease phenotype. The omics analyses in the manuscript are restricted to PRESTO and ROBILA.
+The six-genotype phenotyping experiment is therefore **not a parallel side analysis**: it is the upstream experimental layer that motivated the focused omics design. PRESTO and ROBILA were selected for molecular analysis because they provided contrasting phenotypic responses. For the thermal factor, NH, HS-7 and HS-2 were retained because they represented distinct pre-treatment thermal histories and were associated with different disease-progression patterns; HS was excluded from the omics subset because heat began only at D0.
 
 ## Repository structure
 
@@ -86,11 +105,19 @@ PRESTO + ROBILA]
 
 ## Analysis logic
 
-### 1. Disease phenotype — six genotypes
+### 1. Phenotypic screening and selection of the omics subset
 
-Disease is summarised using AUDPC from seven assessments. The manuscript model treats Treatment, Temperature, Genotype and their interactions as fixed effects and Block as a random intercept. Treatment contrasts are computed within each Genotype × Temperature cell and the 24 P-values are BH-adjusted. Disease trajectories use an AR(1) repeated-measures model. The original phenotype workbook and the supplied phenotype-analysis script are now included in `data/phenotype/` and `scripts/phenotype/`. See [`docs/07_phenotype.md`](docs/07_phenotype.md).
+The study first evaluated disease response across **six carrot genotypes** (DEEP, NANT, NEVA, OXHELLA, PRESTO and ROBILA), **four temperature regimes** (NH, HS-7, HS-2 and HS) and two treatment levels (Control and Treated). Disease was summarised using AUDPC from seven assessments, together with longitudinal disease-progression analyses. The manuscript model treats Treatment, Temperature, Genotype and their interactions as fixed effects and Block as a random intercept. Treatment contrasts are computed within each Genotype × Temperature cell and the 24 P-values are BH-adjusted. Disease trajectories use an AR(1) repeated-measures model. The original phenotype workbook and the supplied phenotype-analysis script are included in `data/phenotype/` and `scripts/phenotype/`. See [`docs/07_phenotype.md`](docs/07_phenotype.md).
 
-The phenotype dataset contains **192 experimental units** (2 treatments × 4 temperatures × 6 genotypes × 4 replicates/blocks), with seven disease assessments per unit and no missing disease scores. The script also contains a supplementary early/late disease-phase analysis; its Control-only formal models are documented separately because they require alignment with the wording of the current manuscript Methods.
+The phenotype dataset contains **192 experimental units** (2 treatments × 4 temperatures × 6 genotypes × 4 replicates/blocks), with seven disease assessments per unit and no missing disease scores.
+
+The molecular analyses were then intentionally narrowed using information from this phenotypic layer:
+
+- **PRESTO and ROBILA** were selected as the two genotypes for transcriptomic and metabolomic analyses because they displayed contrasting phenotypic responses in the experiment.
+- **NH, HS-7 and HS-2** were retained as the thermal backgrounds for omics because they represented distinct pre-treatment heat histories and were associated with different disease-progression patterns.
+- **HS was excluded from the omics subset** because heat exposure started at D0, at the same time as treatment application, so plants had no prior heat exposure when the product was applied.
+
+Thus, the omics analyses should be interpreted as a **focused mechanistic follow-up of the phenotyping experiment**, not as an independent experiment performed on a pre-defined subset. The script also contains a supplementary early/late disease-phase analysis; its Control-only formal models are documented separately because they require alignment with the wording of the current manuscript Methods.
 
 ### 2. RNA-seq preprocessing
 
