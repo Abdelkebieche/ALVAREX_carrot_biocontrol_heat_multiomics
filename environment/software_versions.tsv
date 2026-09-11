@@ -1,0 +1,20 @@
+component	reported_version	notes
+R	4.4.1	Phenotype analysis manuscript version
+FastQC	0.11.9	RNA-seq QC
+MultiQC	1.13	RNA-seq QC aggregation
+fastp	0.23.1	RNA-seq preprocessing
+STAR	2.7.9a	RNA-seq alignment
+featureCounts/Subread	1.6.1	Version reported in manuscript
+WGCNA	1.73	Transcriptomic network analysis
+DESeq2	1.44.0	VST for transcriptomic networks
+maSigPro	not reported	Record exact installed version in final release
+clusterProfiler	not reported	Record exact installed version in final release
+mixOmics	not reported	Record exact installed version in final release
+Compound Discoverer	not reported	Raw LC-HRMS processing
+lme4	not pinned	Phenotype mixed models; manuscript cites Bates et al. 2015
+lmerTest	not pinned	Type III tests for phenotype LMMs
+emmeans	not pinned	Estimated marginal means and contrasts
+nlme	not pinned	Repeated-measures phenotype model with AR(1)
+multcomp	not pinned	Compact-letter displays / multiple comparisons
+DHARMa	not pinned	Simulated residual diagnostics for AUDPC model
+readxl	not pinned	Imports Data_phenotype.xlsx

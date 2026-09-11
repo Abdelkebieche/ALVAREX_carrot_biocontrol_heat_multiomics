@@ -1,0 +1,10 @@
+cff-version: 1.2.0
+message: "If you use this code, cite the associated manuscript and the software references listed in references/references.bib."
+title: "Carrot heat × Bacillus × Alternaria multi-omics analysis workflow"
+type: software
+authors:
+  - family-names: Kebieche
+    given-names: Abdelhamid
+version: 1.1.0
+date-released: 2026-09-11
+repository-code: "https://github.com/<USER>/<REPOSITORY>"
